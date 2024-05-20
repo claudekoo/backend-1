@@ -35,11 +35,18 @@ const addProductToCart = async (cid, pid) => {
     await getCarts();
     const product = {
         product: pid,
-        quantify: 1,
+        quantity: 1,
     };
 
     const index = carts.findIndex(cart => cart.id === cid);
-    carts[index].products.push(product);
+    
+    const existingProduct = carts[index].products.find(p => p.product === pid);
+    
+    if (existingProduct) {
+        existingProduct.quantity++;
+    } else {
+        carts[index].products.push(product);
+    }
 
     await fs.promises.writeFile(pathFile, JSON.stringify(carts));
 

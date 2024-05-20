@@ -17,7 +17,7 @@ const addProduct = async (product) => {
         code,
         stock,
         category,
-        thumbnail,
+        thumbnail: thumbnail || [],
         status: true,
     };
 
@@ -49,7 +49,12 @@ const updateProduct = async (id, productData) => {
     await getProducts();
 
     const index = products.findIndex(product => product.id === id);
-    products[index] = { ...products[index], ...productData };
+    
+    for (let key in products[index]) {
+        if (key !== 'id' && productData.hasOwnProperty(key)) {
+            products[index][key] = productData[key];
+        }
+    }
 
     await fs.promises.writeFile(pathFile, JSON.stringify(products));
     const product = await getProductById(id);
